@@ -9,7 +9,7 @@ Catalog de produse (preț unitar):
 
 Reguli de business (promoții):
     1. Banana:  dacă cantitate >= 3 → discount 10 % pe fiecare buc.
-    2. Mar:     dacă cantitate >= 3 → discount 15 % pe fiecare buc.
+    2. Mar:     la fiecare 3 bucăți, a 3-a e gratuită (multipli de 3).
     3. Portocala + strugure în același coș → discount 5 % pe portocale.
     4. Cantitate maximă per produs: 10 buc. (>10 → ValueError).
     5. Produs inexistent → ValueError.
@@ -66,20 +66,21 @@ class ShoppingCart:
 
         for product, qty in counts.items():
             unit_price = CATALOG[product]
-            discount_rate = 0.0
+            gross = unit_price * qty
 
-            if product == "banana" and qty >= 3:
-                discount_rate = 0.10
-            elif product == "mar" and qty >= 3:
-                discount_rate = 0.15
-            elif product == "portocala" and (has_portocala and has_strugure):
-                discount_rate = 0.05
+            if product == "mar":
+                free_units = qty // 3
+                discount = round(unit_price * free_units, 2)
+                net = round(gross - discount, 2)
             else:
-                discount_rate = 0.0
-
-            gross    = unit_price * qty
-            discount = round(gross * discount_rate, 2)
-            net      = round(gross - discount, 2)
+                if product == "banana" and qty >= 3:
+                    discount_rate = 0.10
+                elif product == "portocala" and (has_portocala and has_strugure):
+                    discount_rate = 0.05
+                else:
+                    discount_rate = 0.0
+                discount = round(gross * discount_rate, 2)
+                net = round(gross - discount, 2)
 
             line_items.append(LineItem(product, qty, unit_price, discount))
             total += net

@@ -15,7 +15,7 @@ The project implements a small **shopping-cart calculator** in Python (`shopping
 **Business rules (promotions):**
 
 - **Bananas:** if quantity ≥ 3, a **10%** discount applies to that line.
-- **Apples (`mar`):** if quantity ≥ 3, a **15%** discount applies to that line.
+- **Apples (`mar`):** for every **3** apples, the **third** is **free** (repeats for every full group of three).
 - **Oranges:** if the cart contains both **oranges and grapes**, a **5%** discount applies to the orange line.
 
 The method returns a **tuple**: the **final total** (rounded to two decimals) and a **list of line items**. Each line is a **`LineItem`** named tuple: **(item, quantity, unit price, total discount in RON for that line)**. The implementation uses explicit branching (`if` / `elif` / `else`), compound conditions, and loops over the aggregated products.
