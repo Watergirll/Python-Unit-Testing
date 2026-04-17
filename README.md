@@ -50,7 +50,6 @@ One representative input per class; each block in the test file carries a commen
 | 5a | Invalid product name | `["kiwi"]` | `ValueError` | Not in catalog → rejected. |
 | 5b | Quantity over limit | `["banana"] * 11` | `ValueError` | 11 > MAX_QUANTITY (10) → rejected. |
 
-> **Screenshot to insert here:** run the command above and capture the terminal output showing `OK` and the two test method names.
 
 #### Boundary value analysis
 
@@ -69,7 +68,9 @@ Values at, below, and above each threshold that triggers a promotion or validati
 | Max quantity — valid | 10× `banana` | **13.50** | 10 = MAX_QUANTITY, accepted. |
 | Max quantity — over limit | 11× `banana` | `ValueError` | 11 > MAX_QUANTITY, rejected. |
 
-> **Screenshot to insert here:** same terminal run as above covers both methods — one screenshot is enough for both tables.
+> **Screenshot to show test results:**
+> <img width="561" height="141" alt="image" src="https://github.com/user-attachments/assets/9c135cc7-6e05-4eef-9fee-11ad8c15a0c1" />
+
 
 > **Diagram to insert here (recommended):** draw a number line for the banana/apple thresholds (mark 2 / 3 / 4 and 10 / 11 with labels "no discount", "discount ON", "limit OK", "limit FAIL"). Use [diagrams.net](https://app.diagrams.net/) or similar. This one diagram covers both the equivalence classes and the boundary analysis visually and is useful for the slides.
 
