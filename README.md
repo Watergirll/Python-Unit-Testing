@@ -2,11 +2,10 @@
 
 # Software Testing Systems (SST) Project
 
-**Chosen Theme:** T1 Unit Testing in Python 
+**Chosen Theme:** T1 Unit Testing in Python
 
 ## Team
 Created by Teodora-Ioana Popa - teodora-ioana.popa@s.unibuc.ro
-
 
 ## 1. Application Description
 
@@ -20,26 +19,74 @@ The project implements a small **shopping-cart calculator** in Python (`shopping
 
 The method returns a **tuple**: the **final total** (rounded to two decimals) and a **list of line items**. Each line is a **`LineItem`** named tuple: **(item, quantity, unit price, total discount in RON for that line)**. The implementation uses explicit branching (`if` / `elif` / `else`), compound conditions, and loops over the aggregated products.
 
-## 2. Environment Configuration 
+## 2. Environment Configuration
+
 * **Hardware Configuration:** [e.g., CPU, RAM]
 * **Software Configuration:** [e.g., OS, Python version]
 * **Virtual Machine:** [Yes/No, and details if applicable]
 * **Tool Versions:** [e.g., pytest version X, mutmut version Y]
 
 ## 3. Testing Strategies
-* **Equivalence Class Partitioning** 
-* **Boundary Value Analysis**
-* **Coverage:** Statement, decision, condition, and independent paths coverage.
-* **Mutation Testing:** Analysis of the report created by the mutant generator, and additional tests to kill 2 surviving non-equivalent mutants.
 
-*(Note: We will include code snippets, screenshots of test executions, results comparison in tabular format, interpretations, and diagrams made with dedicated tools like diagrams.net or Lucidchart.)*
+### 3.1 Functional testing (black-box)
 
-## 4. AI Tools Usage Report 
+File: **`test_shopping_cart_functional.py`** — class **`TestShoppingCartFunctional`** (`unittest.TestCase`).
+Tests are derived exclusively from the specification (prices, promotion rules, validation rules), without reading the source code.
+
+```bash
+python -m unittest test_shopping_cart_functional.py -v
+```
+
+#### Equivalence class partitioning
+
+One representative input per class; each block in the test file carries a comment with the class name.
+
+| # | Equivalence class | Representative input | Expected outcome | Interpretation |
+|---|-------------------|----------------------|------------------|----------------|
+| 1 | Empty cart | `[]` | Total **0.00** RON, no lines | No products → no charge. |
+| 2 | Valid, no promotion | `["strugure"]` | Total **5.00** RON, discount **0** | Qty 1, no rule applies (1 × 5.00). |
+| 3 | Valid, promotion active | `["banana", "banana", "banana"]` | Total **4.05** RON, discount **0.45** | −10% on 3 × 1.50 = 4.50 → 4.05. |
+| 4 | Mixed cart | `["mar","mar","mar","strugure"]` | Total **9.00** RON, mar discount **2.00** | 3rd apple free (4.00) + grapes (5.00). |
+| 5a | Invalid product name | `["kiwi"]` | `ValueError` | Not in catalog → rejected. |
+| 5b | Quantity over limit | `["banana"] * 11` | `ValueError` | 11 > MAX_QUANTITY (10) → rejected. |
+
+> **Screenshot to insert here:** run the command above and capture the terminal output showing `OK` and the two test method names.
+
+#### Boundary value analysis
+
+Values at, below, and above each threshold that triggers a promotion or validation rule.
+
+| Scenario | Input | Expected total (RON) | Interpretation |
+|----------|-------|----------------------|----------------|
+| Bananas — below threshold | 2 | **3.00** | −10% needs ≥ 3; no discount. |
+| Bananas — on threshold | 3 | **4.05** | −10% activates: 4.50 − 0.45. |
+| Bananas — above threshold | 4 | **5.40** | Discount still applies: 6.00 − 0.60. |
+| Apples — below "3rd free" | 2 | **4.00** | 2 × 2.00, no free unit (2 // 3 = 0). |
+| Apples — on threshold | 3 | **4.00** | 1 free apple: pay for 2 × 2.00. |
+| Apples — above threshold | 4 | **6.00** | 1 free in first trio, 3 paid overall. |
+| Oranges, no grapes | 1× `portocala` | **3.00** | Combo rule inactive without grapes. |
+| Oranges + grapes | `portocala` + `strugure` | **7.85** | −5% on oranges (2.85) + 5.00 grapes. |
+| Max quantity — valid | 10× `banana` | **13.50** | 10 = MAX_QUANTITY, accepted. |
+| Max quantity — over limit | 11× `banana` | `ValueError` | 11 > MAX_QUANTITY, rejected. |
+
+> **Screenshot to insert here:** same terminal run as above covers both methods — one screenshot is enough for both tables.
+
+> **Diagram to insert here (recommended):** draw a number line for the banana/apple thresholds (mark 2 / 3 / 4 and 10 / 11 with labels "no discount", "discount ON", "limit OK", "limit FAIL"). Use [diagrams.net](https://app.diagrams.net/) or similar. This one diagram covers both the equivalence classes and the boundary analysis visually and is useful for the slides.
+
+### 3.2 Planned / further work
+
+* **White-box coverage:** statement, branch, condition, and independent paths (basis path testing).
+* **Mutation testing:** run `mutmut`, analyse the surviving mutants, write 2 extra tests to kill 2 non-equivalent survivors.
+
+## 4. AI Tools Usage Report
+
 *(Note: I will include prompts, responses, screenshots of auto-generated code execution, interpretations, and an explicit comparison between our own test suite and the auto-generated one.)*
 
 ## 5. Video Material and Presentation
-* **Presentation Link (max 10 slides):** [Google Slides / Canva link] 
+
+* **Presentation Link (max 10 slides):** [Google Slides / Canva link]
 * **Video Demo Link:** [YouTube / Microsoft Stream link showing app demo and test runs]
 
 ## 6. References
+
 *(Note: We will use the required template for citing official documentation, scientific articles, books, and AI tools.)*
