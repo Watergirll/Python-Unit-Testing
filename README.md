@@ -69,7 +69,12 @@ Values at, below, and above each threshold that triggers a promotion or validati
 | Max quantity — over limit | 11× `banana` | `ValueError` | ValueError raised ✓ | 11 > MAX_QUANTITY, rejected. |
 
 > **Screenshot to show test results:**
-> <img width="561" height="141" alt="image" src="https://github.com/user-attachments/assets/9c135cc7-6e05-4eef-9fee-11ad8c15a0c1" />
+> <img width="1092" height="940" alt="image" src="https://github.com/user-attachments/assets/3e0ee633-0969-4631-baae-3585e6eac73d" />
+> <img width="1104" height="970" alt="image" src="https://github.com/user-attachments/assets/5b9cbfbd-0bf4-450c-b4f3-784b0c1fd968" />
+> <img width="1098" height="963" alt="image" src="https://github.com/user-attachments/assets/9e40b0d4-f02d-42b1-93ff-df296bfe175f" />
+
+
+
 
 
 > **Diagram to insert here (recommended):** draw a number line for the banana/apple thresholds (mark 2 / 3 / 4 and 10 / 11 with labels "no discount", "discount ON", "limit OK", "limit FAIL"). Use [diagrams.net](https://app.diagrams.net/) or similar. This one diagram covers both the equivalence classes and the boundary analysis visually and is useful for the slides.
