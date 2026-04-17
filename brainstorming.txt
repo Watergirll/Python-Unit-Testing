@@ -1,0 +1,76 @@
+Ideea clasei: Cosul de cumparaturi
+
+Ai o listă/array de parcurs, ceea ce impune o buclă (for sau while), esențială pentru a avea circuite independente
+.
+Promotiile aplicabile implică decizii (if/elif/else), ceea ce acoperă necesarul pentru acoperirea la nivel de ramură/decizie
+.
+Poți adăuga ușor condiții compuse (ex. if item == 'mar' and cantitate >= 3), perfecte pentru acoperirea la nivel de condiție
+.
+Ai calcule matematice (preț * cantitate - discount) care vor genera mutanți valoroși la mutation testing
+.
+Prompt recomandat pentru Cursor (Pasul 1)
+Pentru a te asigura că primești o clasă perfectă pentru testare, folosește acest prompt în Cursor:
+"Vreau să scrii o clasă Python numită ShoppingCart care calculează valoarea finală a unui coș de cumpărături. Metoda principală va primi o listă de string-uri (ex: ['banana', 'banana', 'mar', 'mar', 'mar']). Trebuie să existe câteva reguli de business (promoții) aplicate. Cerințe obligatorii pentru structura codului:
+Include limite clare validabile (ex: o cantitate maximă per produs sau aruncă excepție la produse invalide).
+Folosește cel puțin un if/elif/else.
+Folosește cel puțin o condiție compusă (cu and sau or).
+Folosește un for sau while pentru a itera prin produse. Output-ul trebuie să fie un dicționar sau un tuplu cu valoarea finală și o listă de tupluri (item, cantitate, pret, discount). Scrie codul curat, fără teste deocamdată."
+
+--------------------------------------------------------------------------------
+Descrierea punctuală a pașilor și tipurilor de teste (fără diagrame)
+Conform suportului de curs, proiectul tău trebuie să parcurgă următoarele etape riguroase:
+1. Testarea Funcțională (Blackbox)
+Datele de test sunt generate exclusiv pe baza specificațiilor (regulilor aplicației tale), fără a te uita la codul sursă
+.
+Partiționarea în clase de echivalență:
+Ce trebuie să faci: Împarți toate datele de intrare posibile în "clase" (categorii) în care programul ar trebui să se comporte identic
+.
+Exemplu: Clasa 1 (intrări valide: coș cu produse din promoție), Clasa 2 (intrări valide: coș fără promoții), Clasa 3 (intrări invalide: coș gol), Clasa 4 (intrări invalide: produse inexistente).
+Teste necesare: Alegi o singură valoare arbitrară (un reprezentant) din fiecare clasă identificată și scrii un test
+.
+Analiza valorilor de frontieră:
+Ce trebuie să faci: Completează metoda anterioară concentrându-se pe "granițele" claselor, deoarece acolo apar cele mai multe erori
+.
+Teste necesare: Alegi date de test fix pe limită, imediat sub limită și imediat peste limită
+. Dacă, de exemplu, o promoție se aplică la minim 3 mere, vei scrie teste pentru coșuri cu: 2 mere, 3 mere și 4 mere
+.
+2. Testarea Structurală (Whitebox)
+Acum te uiți la codul sursă efectiv. Scopul este să treci prin structurile programului
+.
+Acoperire la nivel de instrucțiune (Statement Coverage):
+Ce trebuie să faci: Te asiguri că fiecare linie de cod din funcția ta este executată măcar o dată în timpul rulării suitei de teste
+.
+Teste necesare: Setul de date care forțează trecerea prin toate liniile
+. Dacă unele rânduri (ex: excepții rare) nu sunt atinse, trebuie să scrii un test dedicat pentru ele.
+Acoperire la nivel de decizie/ramură (Branch Coverage):
+Ce trebuie să faci: Orice decizie (ex: if, while) trebuie evaluată atât la Adevărat cât și la Fals
+.
+Teste necesare: Chiar dacă ai un if fără else scris explicit în cod, trebuie să ai un test în care condiția din if este validă (intră pe ramura True) și un test în care condiția nu se aplică (sare peste if, simulând ramura implicită False)
+.
+Acoperire la nivel de condiție (Condition Coverage):
+Ce trebuie să faci: Se referă la condițiile compuse. Dacă ai un if (A and B), acoperirea de decizie verifică doar rezultatul final al parantezei. Acoperirea de condiție cere ca A și B, individual, să ia pe rând valorile True și False
+.
+Teste necesare: Generezi combinații de teste astfel încât fiecare sub-condiție logică să fi fost și falsă și adevărată în rulările tale
+.
+Circuite independente (Basis Path Testing):
+Ce trebuie să faci: Pe baza codului, se calculează Complexitatea Ciclomatică folosind formula lui McCabe: V(G)=e−n+2 (unde e = muchii, n = noduri). Acest număr îți dă numărul de circuite (rute) liniar independente prin codul tău
+. Orice altă cale prin program va fi doar o combinație a acestui set de bază
+.
+Teste necesare: Trebuie să scrii exact atâtea teste câte circuite independente ți-au rezultat din calcul (e.g., dacă V(G)=4, ai nevoie de 4 teste specifice care să ruteze execuția pe cele 4 căi principale)
+.
+3. Mutation Testing
+Evaluează cât de bune sunt testele pe care tocmai le-ai scris la pașii anteriori
+. Un tool va insera "mutanți" (mici defecte, ex: schimbă + cu - sau < cu <=) în codul tău
+.
+Analiza raportului:
+Ce trebuie să faci: Rulezi suita ta de teste pe codul mutant. Dacă testele tale pică, înseamnă că au detectat eroarea (mutant "omorât" / distins). Dacă testele trec cu succes deși codul a fost stricat, mutantul a "rămas în viață" (live mutant / nedistins)
+. Analizezi lista mutanților supraviețuitori.
+Atenție: Trebuie să verifici dacă unii sunt mutanți echivalenți (codul a fost schimbat, dar matematic/logic face absolut același lucru ca înainte, pentru orice date de intrare). Aceștia nu pot fi omorâți niciodată
+.
+Teste suplimentare pentru a omorî 2 mutanți neechivalenți:
+Ce trebuie să faci: Iei 2 mutanți care au supraviețuit și care nu sunt echivalenți
+. Te gândești: "Ce input ar face ca funcția mea originală să dea un rezultat, iar codul cu defect (mutantul) să dea alt rezultat?"
+.
+Teste necesare: Scrii 2 teste unitare noi (sau adaugi aserțiuni) care să verifice exact acea diferență de comportament, astfel încât, la o nouă rulare, tool-ul să raporteze cei 2 mutanți ca fiind "omorâți"
+.
+Acesta este tot planul. Poți lua fiecare punct pe rând și să îi ceri lui Cursor (sau să gândești tu) exact secțiunea respectivă.
