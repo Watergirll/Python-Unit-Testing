@@ -41,32 +41,32 @@ python -m unittest test_shopping_cart_functional.py -v
 
 One representative input per class; each block in the test file carries a comment with the class name.
 
-| # | Equivalence class | Representative input | Expected outcome | Interpretation |
-|---|-------------------|----------------------|------------------|----------------|
-| 1 | Empty cart | `[]` | Total **0.00** RON, no lines | No products → no charge. |
-| 2 | Valid, no promotion | `["strugure"]` | Total **5.00** RON, discount **0** | Qty 1, no rule applies (1 × 5.00). |
-| 3 | Valid, promotion active | `["banana", "banana", "banana"]` | Total **4.05** RON, discount **0.45** | −10% on 3 × 1.50 = 4.50 → 4.05. |
-| 4 | Mixed cart | `["mar","mar","mar","strugure"]` | Total **9.00** RON, mar discount **2.00** | 3rd apple free (4.00) + grapes (5.00). |
-| 5a | Invalid product name | `["kiwi"]` | `ValueError` | Not in catalog → rejected. |
-| 5b | Quantity over limit | `["banana"] * 11` | `ValueError` | 11 > MAX_QUANTITY (10) → rejected. |
+| # | Equivalence class | Representative input | Expected outcome | Actual outcome | Interpretation |
+|---|-------------------|----------------------|------------------|----------------|----------------|
+| 1 | Empty cart | `[]` | Total **0.00** RON, no lines | total=0.0, lines=[] ✓ | No products → no charge. |
+| 2 | Valid, no promotion | `["strugure"]` | Total **5.00** RON, discount **0** | total=5.0, discount=0.0 ✓ | Qty 1, no rule applies (1 × 5.00). |
+| 3 | Valid, promotion active | `["banana", "banana", "banana"]` | Total **4.05** RON, discount **0.45** | total=4.05, discount=0.45 ✓ | −10% on 3 × 1.50 = 4.50 → 4.05. |
+| 4 | Mixed cart | `["mar","mar","mar","strugure"]` | Total **9.00** RON, mar discount **2.00** | total=9.0, mar_discount=2.0 ✓ | 3rd apple free (4.00) + grapes (5.00). |
+| 5a | Invalid product name | `["kiwi"]` | `ValueError` | ValueError raised ✓ | Not in catalog → rejected. |
+| 5b | Quantity over limit | `["banana"] * 11` | `ValueError` | ValueError raised ✓ | 11 > MAX_QUANTITY (10) → rejected. |
 
 
 #### Boundary value analysis
 
 Values at, below, and above each threshold that triggers a promotion or validation rule.
 
-| Scenario | Input | Expected total (RON) | Interpretation |
-|----------|-------|----------------------|----------------|
-| Bananas — below threshold | 2 | **3.00** | −10% needs ≥ 3; no discount. |
-| Bananas — on threshold | 3 | **4.05** | −10% activates: 4.50 − 0.45. |
-| Bananas — above threshold | 4 | **5.40** | Discount still applies: 6.00 − 0.60. |
-| Apples — below "3rd free" | 2 | **4.00** | 2 × 2.00, no free unit (2 // 3 = 0). |
-| Apples — on threshold | 3 | **4.00** | 1 free apple: pay for 2 × 2.00. |
-| Apples — above threshold | 4 | **6.00** | 1 free in first trio, 3 paid overall. |
-| Oranges, no grapes | 1× `portocala` | **3.00** | Combo rule inactive without grapes. |
-| Oranges + grapes | `portocala` + `strugure` | **7.85** | −5% on oranges (2.85) + 5.00 grapes. |
-| Max quantity — valid | 10× `banana` | **13.50** | 10 = MAX_QUANTITY, accepted. |
-| Max quantity — over limit | 11× `banana` | `ValueError` | 11 > MAX_QUANTITY, rejected. |
+| Scenario | Input | Expected total (RON) | Actual total (RON) | Interpretation |
+|----------|-------|----------------------|--------------------|----------------|
+| Bananas — below threshold | 2 | **3.00** | 3.0, discount=0.0 ✓ | −10% needs ≥ 3; no discount. |
+| Bananas — on threshold | 3 | **4.05** | 4.05, discount=0.45 ✓ | −10% activates: 4.50 − 0.45. |
+| Bananas — above threshold | 4 | **5.40** | 5.4, discount=0.6 ✓ | Discount still applies: 6.00 − 0.60. |
+| Apples — below "3rd free" | 2 | **4.00** | 4.0, discount=0.0 ✓ | 2 × 2.00, no free unit (2 // 3 = 0). |
+| Apples — on threshold | 3 | **4.00** | 4.0, discount=2.0 ✓ | 1 free apple: pay for 2 × 2.00. |
+| Apples — above threshold | 4 | **6.00** | 6.0, discount=2.0 ✓ | 1 free in first trio, 3 paid overall. |
+| Oranges, no grapes | 1× `portocala` | **3.00** | 3.0, discount=0.0 ✓ | Combo rule inactive without grapes. |
+| Oranges + grapes | `portocala` + `strugure` | **7.85** | 7.85, portocala_discount=0.15 ✓ | −5% on oranges (2.85) + 5.00 grapes. |
+| Max quantity — valid | 10× `banana` | **13.50** | 13.5 ✓ | 10 = MAX_QUANTITY, accepted. |
+| Max quantity — over limit | 11× `banana` | `ValueError` | ValueError raised ✓ | 11 > MAX_QUANTITY, rejected. |
 
 > **Screenshot to show test results:**
 > <img width="561" height="141" alt="image" src="https://github.com/user-attachments/assets/9c135cc7-6e05-4eef-9fee-11ad8c15a0c1" />
