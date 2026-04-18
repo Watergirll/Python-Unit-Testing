@@ -79,9 +79,90 @@ Values at, below, and above each threshold that triggers a promotion or validati
 
 > **Diagram to insert here (recommended):** draw a number line for the banana/apple thresholds (mark 2 / 3 / 4 and 10 / 11 with labels "no discount", "discount ON", "limit OK", "limit FAIL"). Use [diagrams.net](https://app.diagrams.net/) or similar. This one diagram covers both the equivalence classes and the boundary analysis visually and is useful for the slides.
 
-### 3.2 Planned / further work
+### 3.2 White-box testing
 
-* **White-box coverage:** statement, branch, condition, and independent paths (basis path testing).
+Goal: execute each instruction at least once (Statement Coverage) and execute each decision on both outcomes True/False (Decision/Branch Coverage).
+
+#### Minimal test data for 100% Statement + 100% Branch (ShoppingCart)
+
+| ID | Input | Expected | Main branches covered |
+|----|-------|----------|-----------------------|
+| TC1_EMPTY_CART | `[]` | total=0.0, lines=[] | `calculate`: for-loop not entered; `_count_items`: empty input; `_validate`: no iteration |
+| TC2_VALID_MIXED_PROMOS | `["mar", "banana", "banana", "banana", "portocala", "strugure"]` | total=15.9 | `product == "mar"` (True/False), banana promo decision (True/False), orange+grape decision (True/False), `else` with discount_rate=0.0 |
+| TC3_UNKNOWN_PRODUCT | `["kiwi"]` | `ValueError` | `_validate`: `product not in CATALOG` -> True |
+| TC4_OVER_MAX_QUANTITY | `["banana"] * 11` | `ValueError` | `_validate`: `qty > MAX_QUANTITY` -> True |
+
+Why this set is minimal:
+
+- One valid empty-cart case is needed for the path where the main loop is skipped.
+- One valid non-empty mixed case is needed to traverse all promotion-related branches.
+- Two separate invalid cases are needed because unknown product and over-limit quantity are different error branches.
+
+#### MC/DC for compound decision
+
+Consider decision form `if A or (B and C)`.
+
+For ShoppingCart, this structure appears in the orange promotion check:
+
+- `A`: `product == "portocala"`
+- `B`: `has_portocala`
+- `C`: `has_strugure`
+- Decision: `A and (B and C)`
+
+To document MC/DC independently of domain semantics, the generic test set for `A or (B and C)` is:
+
+| Test | A | B | C | D = A or (B and C) |
+|------|---|---|---|--------------------|
+| MCDC_T1 | 0 | 1 | 1 | 1 |
+| MCDC_T2 | 0 | 0 | 1 | 0 |
+| MCDC_T3 | 0 | 1 | 0 | 0 |
+| MCDC_T4 | 1 | 1 | 0 | 1 |
+
+Independence pairs (no masking):
+
+- A influences decision: `MCDC_T3` vs `MCDC_T4` (B,C fixed to 1,0)
+- B influences decision: `MCDC_T2` vs `MCDC_T1` (A,C fixed to 0,1)
+- C influences decision: `MCDC_T3` vs `MCDC_T1` (A,B fixed to 0,1)
+
+Masking avoidance rule:
+
+- For B and C, keep A=0 so A cannot force decision to True.
+- For A, keep `(B and C)=0` so decision depends only on A.
+
+#### Complexitate ciclomatica si set de circuite independente
+
+Pentru graful de control din `diagrams/CFG_calcul.drawio`, folosim formula McCabe:
+
+`V(G) = e - n + 2`
+
+Unde:
+
+- `n = 13` noduri (B0..B10, incluzand nodurile intermediare B8a/B8b)
+- `e = 16` muchii
+
+Rezultat:
+
+`V(G) = 16 - 13 + 2 = 5`
+
+Deci numarul minim de trasee linear independente (basis paths) este 5.
+
+Set de baza propus (P1..P5):
+
+- `P1`: B0 -> B1(F) -> B10
+- `P2`: B0 -> B1(T) -> B2 -> B3(T) -> B4 -> B9 -> B1(F) -> B10
+- `P3`: B0 -> B1(T) -> B2 -> B3(F) -> B5(T) -> B6 -> B8 -> B9 -> B1(F) -> B10
+- `P4`: B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(T) -> B8a -> B8 -> B9 -> B1(F) -> B10
+- `P5`: B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(F) -> B8b -> B8 -> B9 -> B1(F) -> B10
+
+Acest set garanteaza parcurgerea tuturor ramurilor relevante:
+
+- iesirea din bucla (`B1`: True/False)
+- decizia `product == "mar"` (True/False)
+- decizia `banana >= 3` (True/False)
+- decizia `portocala combo` (True/False)
+
+### 3.3 Planned / further work
+
 * **Mutation testing:** run `mutmut`, analyse the surviving mutants, write 2 extra tests to kill 2 non-equivalent survivors.
 
 ## 4. AI Tools Usage Report

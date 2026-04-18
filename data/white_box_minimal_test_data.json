@@ -1,0 +1,74 @@
+{
+  "purpose": "Set minimal de date pentru 100% Statement Coverage si 100% Decision/Branch Coverage in clasa ShoppingCart",
+  "target_class": "ShoppingCart",
+  "coverage_goal": {
+    "statement_coverage": "100%",
+    "branch_coverage": "100%"
+  },
+  "test_cases": [
+    {
+      "id": "TC1_EMPTY_CART",
+      "type": "valid",
+      "input": [],
+      "expected": {
+        "total": 0.0,
+        "lines": []
+      },
+      "covers": [
+        "calculate: bucla for nu ruleaza",
+        "_count_items: lista goala",
+        "_validate: fara iteratii"
+      ]
+    },
+    {
+      "id": "TC2_VALID_MIXED_PROMOS",
+      "type": "valid",
+      "input": ["mar", "banana", "banana", "banana", "portocala", "strugure"],
+      "expected": {
+        "total": 15.9,
+        "notes": [
+          "mar: qty=1, discount=0.0",
+          "banana: qty=3, discount=0.45",
+          "portocala: qty=1, discount=0.15 (combo cu strugure)",
+          "strugure: qty=1, discount=0.0"
+        ]
+      },
+      "covers": [
+        "calculate: product == mar -> True",
+        "calculate: product == mar -> False",
+        "calculate: banana and qty>=3 -> True",
+        "calculate: banana and qty>=3 -> False",
+        "calculate: portocala and has_portocala and has_strugure -> True",
+        "calculate: portocala combo condition -> False (ex: strugure)",
+        "calculate: else discount_rate=0.0",
+        "_count_items: bucla cu elemente",
+        "_validate: product in CATALOG -> False pentru conditia de eroare",
+        "_validate: qty > MAX_QUANTITY -> False"
+      ]
+    },
+    {
+      "id": "TC3_UNKNOWN_PRODUCT",
+      "type": "invalid",
+      "input": ["kiwi"],
+      "expected_exception": "ValueError",
+      "covers": [
+        "_validate: product not in CATALOG -> True"
+      ]
+    },
+    {
+      "id": "TC4_OVER_MAX_QUANTITY",
+      "type": "invalid",
+      "input": ["banana", "banana", "banana", "banana", "banana", "banana", "banana", "banana", "banana", "banana", "banana"],
+      "expected_exception": "ValueError",
+      "covers": [
+        "_validate: qty > MAX_QUANTITY -> True"
+      ]
+    }
+  ],
+  "why_minimal": [
+    "Ai nevoie de un caz cu cos gol si un caz cu cos ne-gol pentru ambele comportamente ale buclei din calculate.",
+    "Ai nevoie de doua cazuri de eroare separate: produs inexistent si depasire cantitate maxima.",
+    "Un singur caz valid mixt activeaza toate ramurile promotionale relevante (mar, banana>=3, portocala+strugure, respectiv fara discount)."
+  ],
+  "usage_note": "Ruleaza aceste cazuri in testele white-box si valideaza coverage cu un tool de coverage (ex: coverage.py)."
+}
