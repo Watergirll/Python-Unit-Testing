@@ -7,7 +7,7 @@
 ## Team
 Created by 
 Teodora-Ioana Popa - teodora-ioana.popa@s.unibuc.ro
-Prioteasa Liviu - 
+Prioteasa Liviu - liviu-florentin.prioteasa@s.unibuc.ro
 
 ## 1. Application Description
 
