@@ -131,38 +131,35 @@ Masking avoidance rule:
 - For B and C, keep A=0 so A cannot force decision to True.
 - For A, keep `(B and C)=0` so decision depends only on A.
 
-#### Complexitate ciclomatica si set de circuite independente
+#### Cyclomatic Complexity and Independent Path Set
 
-Pentru graful de control din `diagrams/CFG_calcul.drawio`, folosim formula McCabe:
+For the control flow graph (CFG) in `diagrams/CFG_calcul.drawio`, we use **McCabe’s Formula**:
 
-`V(G) = e - n + 2`
+$$V(G) = e - n + 2$$
 
-Unde:
+**Where:**
+* **$n = 13$ nodes** (B0 through B10, including intermediate nodes B8a/B8b)
+* **$e = 16$ edges**
 
-- `n = 13` noduri (B0..B10, incluzand nodurile intermediare B8a/B8b)
-- `e = 16` muchii
+**Result:**
+$$V(G) = 16 - 13 + 2 = 5$$
 
-Rezultat:
+Therefore, the minimum number of **linearly independent paths** (basis paths) is **5**.
 
-`V(G) = 16 - 13 + 2 = 5`
+### Proposed Basis Set (P1–P5):
 
-Deci numarul minim de trasee linear independente (basis paths) este 5.
+* **P1:** B0 -> B1(F) -> B10
+* **P2:** B0 -> B1(T) -> B2 -> B3(T) -> B4 -> B9 -> B1(F) -> B10
+* **P3:** B0 -> B1(T) -> B2 -> B3(F) -> B5(T) -> B6 -> B8 -> B9 -> B1(F) -> B10
+* **P4:** B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(T) -> B8a -> B8 -> B9 -> B1(F) -> B10
+* **P5:** B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(F) -> B8b -> B8 -> B9 -> B1(F) -> B10
 
-Set de baza propus (P1..P5):
-
-- `P1`: B0 -> B1(F) -> B10
-- `P2`: B0 -> B1(T) -> B2 -> B3(T) -> B4 -> B9 -> B1(F) -> B10
-- `P3`: B0 -> B1(T) -> B2 -> B3(F) -> B5(T) -> B6 -> B8 -> B9 -> B1(F) -> B10
-- `P4`: B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(T) -> B8a -> B8 -> B9 -> B1(F) -> B10
-- `P5`: B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(F) -> B8b -> B8 -> B9 -> B1(F) -> B10
-
-Acest set garanteaza parcurgerea tuturor ramurilor relevante:
-
-- iesirea din bucla (`B1`: True/False)
-- decizia `product == "mar"` (True/False)
-- decizia `banana >= 3` (True/False)
-- decizia `portocala combo` (True/False)
-
+### Coverage Analysis:
+This set guarantees the traversal of all relevant branches within the logic:
+* **Loop exit** (B1: True/False)
+* **Decision:** `product == "mar"` (True/False)
+* **Decision:** `banana >= 3` (True/False)
+* **Decision:** `portocala combo` (True/False)
 ### 3.3 Planned / further work
 
 * **Mutation testing:** run `mutmut`, analyse the surviving mutants, write 2 extra tests to kill 2 non-equivalent survivors.
