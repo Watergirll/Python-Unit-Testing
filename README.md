@@ -5,7 +5,9 @@
 **Chosen Theme:** T1 Unit Testing in Python
 
 ## Team
-Created by Teodora-Ioana Popa - teodora-ioana.popa@s.unibuc.ro
+Created by 
+Teodora-Ioana Popa - teodora-ioana.popa@s.unibuc.ro
+Prioteasa Liviu - 
 
 ## 1. Application Description
 
