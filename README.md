@@ -218,7 +218,7 @@ Replaced Romanian diacritics inside print strings with ASCII equivalents due to 
 ## 5. Video Material and Presentation
 
 * **Presentation Link (max 10 slides):** [slides presentation](https://docs.google.com/presentation/d/1CChePBqJ_JRP1ibhEZwwAJy1BrkgKWnTNPd9szI5cbY/edit?usp=sharing)
-* **Video Demo Link:** [YouTube / Microsoft Stream link showing app demo and test runs]
+* **Video Demo Link:** https://youtu.be/C70hfW9qLO4
 
 ## 6. References
 
