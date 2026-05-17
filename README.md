@@ -165,12 +165,53 @@ This set guarantees the traversal of all relevant branches within the logic:
 * **Mutation testing:** run `mutmut`, analyse the surviving mutants, write 2 extra tests to kill 2 non-equivalent survivors.
 
 ## 4. AI Tools Usage Report
+Tool used: Cursor IDE (model: Claude Sonnet 4.6)
 
-*(Note: I will include prompts, responses, screenshots of auto-generated code execution, interpretations, and an explicit comparison between our own test suite and the auto-generated one.)*
+### Interaction 1 — Generating the ShoppingCart class
+Prompt submitted:
+
+"I want you to write a Python class named ShoppingCart that calculates the final value of a shopping cart. The main method will receive a list of strings (e.g. ['banana', 'banana', 'mar', 'mar', 'mar']). There must be several business rules (promotions) applied. Mandatory structural requirements: Include clear validatable limits (e.g. a maximum quantity per product or raise an exception for invalid products). Use at least one if/elif/else. Use at least one compound condition (with and or or). Use a for or while to iterate through products. The output must be a dictionary or a tuple with the final value and a list of tuples (item, quantity, price, discount). Write clean code, no tests yet."
+
+What the AI generated:
+
+Class ShoppingCart with method calculate(items)
+LineItem (NamedTuple) with fields item, quantity, price, discount
+Fixed catalog with 4 products (banana, mar, portocala, strugure)
+3 promotions: −10% on bananas (qty ≥ 3), −15% on apples (qty ≥ 3), −5% on oranges when grapes are also in the cart
+Validations: ValueError for unknown product and for qty > 10
+Private helper methods _count_items and _validate
+
+Manual intervention after generation:
+
+The apple promotion was changed: instead of a flat −15% discount, the rule became "every third apple is free for each group of three" (qty // 3 free units) — a follow-up prompt was submitted for this change.
+
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/810e2934-9f14-429d-ad47-3618507ee0f8" />
+
+
+### Interaction 2 — Generating the blackbox tests (TestShoppingCartFunctional)
+Prompt submitted:
+
+"Now that we have implemented the ShoppingCart class, we need to write the first part of the unit tests: Functional (Black-box) Testing, using Python's unittest module. Please generate a test class TestShoppingCartFunctional containing two distinct methods, according to testing theory: test_equivalence_partitioning [...] test_boundary_value_analysis [...] Do not generate structural (White-box) tests yet, limit yourself to Black-box only."
+
+What the AI generated:
+
+Method test_equivalence_partitioning with 6 documented scenarios (empty cart, no promotion, active promotion, mixed cart, invalid product, quantity above limit)
+Method test_boundary_value_analysis with 10 scenarios at promotion thresholds (below/on/above boundary for bananas, apples, oranges+grapes combo, maximum quantity limit)
+Explicit comments above each test block identifying the class or boundary being tested
+Manual intervention after generation:
+
+Added a _log() helper function and print statements to display input, expected, and actual values in the terminal for each assertion — requested via a follow-up prompt
+Replaced Romanian diacritics inside print strings with ASCII equivalents due to a Windows terminal encoding limitation (cp1252) that caused UnicodeEncodeError at runtime
+
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/8408cb55-622e-4abd-bca9-64b63dd7bb77" />
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/0894a821-eab4-4209-bd4c-a2bc1bbac576" />
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/56700e71-bcc0-495e-8963-a8ebec0619f5" />
+
+
 
 ## 5. Video Material and Presentation
 
-* **Presentation Link (max 10 slides):** [Google Slides / Canva link]
+* **Presentation Link (max 10 slides):** [slides presentation](https://docs.google.com/presentation/d/1CChePBqJ_JRP1ibhEZwwAJy1BrkgKWnTNPd9szI5cbY/edit?usp=sharing)
 * **Video Demo Link:** [YouTube / Microsoft Stream link showing app demo and test runs]
 
 ## 6. References
