@@ -214,6 +214,29 @@ Replaced Romanian diacritics inside print strings with ASCII equivalents due to 
 <img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/56700e71-bcc0-495e-8963-a8ebec0619f5" />
 
 
+### Interaction 3 — Generating the whitebox tests (TestShoppingCartWhiteBox)
+Prompt submitted:
+
+"Genereaza un nou fisier ce contine o clasa de teste pentru documentarile efectuate. Sugerează cazuri de test suplimentare care să mărească scorul de acoperire la nivel de mutanți și să identifice eventuale erori de logică la frontierele intervalelor."
+
+What the AI generated:
+
+Minimal White-Box Coverage Set (TC1-TC4)
+
+Implements the documented 4-test minimum for 100% Statement + Branch coverage
+TC1 (empty cart) covers loop bypass; TC2 (mixed promos) covers all decision branches; TC3-TC4 cover both error conditions
+Ensures every code path and conditional outcome is executed at least once
+
+Adds 6 extra tests targeting promotion thresholds (qty=2→3→4 for banana/apple, combo conditions, max quantity=10)
+Tests both sides of each boundary (below, on, above) to detect faulty comparisons (< vs ≤, >= vs >)
+Output Format Alignment with Functional Tests
+
+Replicates the exact logging style: _log() helper function, visual separators, explicit Input/Expected/Actual format
+Unified test infrastructure makes it easy to run both suites side-by-side and compare results
+Consistent error message formatting for ValueError cases ensures traceability across test types
+
+<img width="792" height="1091" alt="image" src="https://github.com/user-attachments/assets/be367c29-bf9c-4673-a53a-bc8ad8a96f66" />
+<img width="792" height="616" alt="image" src="https://github.com/user-attachments/assets/d9e8caa0-5022-44b0-8962-e776120a7335" />
 
 ## 5. Video Material and Presentation
 
