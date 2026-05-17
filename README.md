@@ -5,9 +5,17 @@
 **Chosen Theme:** T1 Unit Testing in Python
 
 ## Team
-Created by Teodora-Ioana Popa - teodora-ioana.popa@s.unibuc.ro
+Created by 
+Teodora-Ioana Popa - teodora-ioana.popa@s.unibuc.ro
+Prioteasa Liviu - liviu-florentin.prioteasa@s.unibuc.ro
 
 ## 1. Application Description
+
+ShoppingCart is a simple shopping cart calculator for a fruit store. A customer adds fruits to their cart — such as bananas, apples, oranges, or grapes — and the application computes the total amount they need to pay.
+
+The store runs three ongoing promotions: customers who buy three or more bananas receive a 10% discount on all bananas in their cart; apples come with a "buy two, get one free" deal that repeats for every group of three; and buying oranges together with grapes earns a 5% discount on the oranges.
+
+The application also enforces basic purchase limits: each product can be added up to a maximum of 10 units per transaction, and only items available in the store's catalog are accepted. Any attempt to exceed these limits is immediately flagged as an error.
 
 The project implements a small **shopping-cart calculator** in Python (`shopping_cart.py`). The main class is **`ShoppingCart`**. Its public method **`calculate(items)`** accepts a **list of product name strings** (e.g. `['banana', 'banana', 'mar', 'mar', 'mar']`). Products are aggregated by name, validated against a fixed **catalog** (`banana`, `mar`, `portocala`, `strugure`) with unit prices in RON. **Invalid product names** or **quantities above 10 per product** raise **`ValueError`**.
 
@@ -129,49 +137,87 @@ Masking avoidance rule:
 - For B and C, keep A=0 so A cannot force decision to True.
 - For A, keep `(B and C)=0` so decision depends only on A.
 
-#### Complexitate ciclomatica si set de circuite independente
+#### Cyclomatic Complexity and Independent Path Set
 
-Pentru graful de control din `diagrams/CFG_calcul.drawio`, folosim formula McCabe:
+For the control flow graph (CFG) in `diagrams/CFG_calcul.drawio`, we use **McCabe’s Formula**:
 
-`V(G) = e - n + 2`
+$$V(G) = e - n + 2$$
 
-Unde:
+**Where:**
+* **$n = 13$ nodes** (B0 through B10, including intermediate nodes B8a/B8b)
+* **$e = 16$ edges**
 
-- `n = 13` noduri (B0..B10, incluzand nodurile intermediare B8a/B8b)
-- `e = 16` muchii
+**Result:**
+$$V(G) = 16 - 13 + 2 = 5$$
 
-Rezultat:
+Therefore, the minimum number of **linearly independent paths** (basis paths) is **5**.
 
-`V(G) = 16 - 13 + 2 = 5`
+### Proposed Basis Set (P1–P5):
 
-Deci numarul minim de trasee linear independente (basis paths) este 5.
+* **P1:** B0 -> B1(F) -> B10
+* **P2:** B0 -> B1(T) -> B2 -> B3(T) -> B4 -> B9 -> B1(F) -> B10
+* **P3:** B0 -> B1(T) -> B2 -> B3(F) -> B5(T) -> B6 -> B8 -> B9 -> B1(F) -> B10
+* **P4:** B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(T) -> B8a -> B8 -> B9 -> B1(F) -> B10
+* **P5:** B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(F) -> B8b -> B8 -> B9 -> B1(F) -> B10
 
-Set de baza propus (P1..P5):
-
-- `P1`: B0 -> B1(F) -> B10
-- `P2`: B0 -> B1(T) -> B2 -> B3(T) -> B4 -> B9 -> B1(F) -> B10
-- `P3`: B0 -> B1(T) -> B2 -> B3(F) -> B5(T) -> B6 -> B8 -> B9 -> B1(F) -> B10
-- `P4`: B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(T) -> B8a -> B8 -> B9 -> B1(F) -> B10
-- `P5`: B0 -> B1(T) -> B2 -> B3(F) -> B5(F) -> B7(F) -> B8b -> B8 -> B9 -> B1(F) -> B10
-
-Acest set garanteaza parcurgerea tuturor ramurilor relevante:
-
-- iesirea din bucla (`B1`: True/False)
-- decizia `product == "mar"` (True/False)
-- decizia `banana >= 3` (True/False)
-- decizia `portocala combo` (True/False)
-
+### Coverage Analysis:
+This set guarantees the traversal of all relevant branches within the logic:
+* **Loop exit** (B1: True/False)
+* **Decision:** `product == "mar"` (True/False)
+* **Decision:** `banana >= 3` (True/False)
+* **Decision:** `portocala combo` (True/False)
 ### 3.3 Planned / further work
 
 * **Mutation testing:** run `mutmut`, analyse the surviving mutants, write 2 extra tests to kill 2 non-equivalent survivors.
 
 ## 4. AI Tools Usage Report
+Tool used: Cursor IDE (model: Claude Sonnet 4.6)
 
-*(Note: I will include prompts, responses, screenshots of auto-generated code execution, interpretations, and an explicit comparison between our own test suite and the auto-generated one.)*
+### Interaction 1 — Generating the ShoppingCart class
+Prompt submitted:
+
+"I want you to write a Python class named ShoppingCart that calculates the final value of a shopping cart. The main method will receive a list of strings (e.g. ['banana', 'banana', 'mar', 'mar', 'mar']). There must be several business rules (promotions) applied. Mandatory structural requirements: Include clear validatable limits (e.g. a maximum quantity per product or raise an exception for invalid products). Use at least one if/elif/else. Use at least one compound condition (with and or or). Use a for or while to iterate through products. The output must be a dictionary or a tuple with the final value and a list of tuples (item, quantity, price, discount). Write clean code, no tests yet."
+
+What the AI generated:
+
+Class ShoppingCart with method calculate(items)
+LineItem (NamedTuple) with fields item, quantity, price, discount
+Fixed catalog with 4 products (banana, mar, portocala, strugure)
+3 promotions: −10% on bananas (qty ≥ 3), −15% on apples (qty ≥ 3), −5% on oranges when grapes are also in the cart
+Validations: ValueError for unknown product and for qty > 10
+Private helper methods _count_items and _validate
+
+Manual intervention after generation:
+
+The apple promotion was changed: instead of a flat −15% discount, the rule became "every third apple is free for each group of three" (qty // 3 free units) — a follow-up prompt was submitted for this change.
+
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/810e2934-9f14-429d-ad47-3618507ee0f8" />
+
+
+### Interaction 2 — Generating the blackbox tests (TestShoppingCartFunctional)
+Prompt submitted:
+
+"Now that we have implemented the ShoppingCart class, we need to write the first part of the unit tests: Functional (Black-box) Testing, using Python's unittest module. Please generate a test class TestShoppingCartFunctional containing two distinct methods, according to testing theory: test_equivalence_partitioning [...] test_boundary_value_analysis [...] Do not generate structural (White-box) tests yet, limit yourself to Black-box only."
+
+What the AI generated:
+
+Method test_equivalence_partitioning with 6 documented scenarios (empty cart, no promotion, active promotion, mixed cart, invalid product, quantity above limit)
+Method test_boundary_value_analysis with 10 scenarios at promotion thresholds (below/on/above boundary for bananas, apples, oranges+grapes combo, maximum quantity limit)
+Explicit comments above each test block identifying the class or boundary being tested
+Manual intervention after generation:
+
+Added a _log() helper function and print statements to display input, expected, and actual values in the terminal for each assertion — requested via a follow-up prompt
+Replaced Romanian diacritics inside print strings with ASCII equivalents due to a Windows terminal encoding limitation (cp1252) that caused UnicodeEncodeError at runtime
+
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/8408cb55-622e-4abd-bca9-64b63dd7bb77" />
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/0894a821-eab4-4209-bd4c-a2bc1bbac576" />
+<img width="1720" height="1392" alt="image" src="https://github.com/user-attachments/assets/56700e71-bcc0-495e-8963-a8ebec0619f5" />
+
+
 
 ## 5. Video Material and Presentation
 
-* **Presentation Link (max 10 slides):** [Google Slides / Canva link]
+* **Presentation Link (max 10 slides):** [slides presentation](https://docs.google.com/presentation/d/1CChePBqJ_JRP1ibhEZwwAJy1BrkgKWnTNPd9szI5cbY/edit?usp=sharing)
 * **Video Demo Link:** [YouTube / Microsoft Stream link showing app demo and test runs]
 
 ## 6. References
