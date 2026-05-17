@@ -11,6 +11,12 @@ Prioteasa Liviu - liviu-florentin.prioteasa@s.unibuc.ro
 
 ## 1. Application Description
 
+ShoppingCart is a simple shopping cart calculator for a fruit store. A customer adds fruits to their cart — such as bananas, apples, oranges, or grapes — and the application computes the total amount they need to pay.
+
+The store runs three ongoing promotions: customers who buy three or more bananas receive a 10% discount on all bananas in their cart; apples come with a "buy two, get one free" deal that repeats for every group of three; and buying oranges together with grapes earns a 5% discount on the oranges.
+
+The application also enforces basic purchase limits: each product can be added up to a maximum of 10 units per transaction, and only items available in the store's catalog are accepted. Any attempt to exceed these limits is immediately flagged as an error.
+
 The project implements a small **shopping-cart calculator** in Python (`shopping_cart.py`). The main class is **`ShoppingCart`**. Its public method **`calculate(items)`** accepts a **list of product name strings** (e.g. `['banana', 'banana', 'mar', 'mar', 'mar']`). Products are aggregated by name, validated against a fixed **catalog** (`banana`, `mar`, `portocala`, `strugure`) with unit prices in RON. **Invalid product names** or **quantities above 10 per product** raise **`ValueError`**.
 
 **Business rules (promotions):**
